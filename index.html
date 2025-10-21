@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>英単語テスト対策</title>
+<style>
+  body {
+    font-family: "Segoe UI", sans-serif;
+    background: #f7f9fb;
+    text-align: center;
+    padding: 20px;
+  }
+  h1 { color: #333; }
+  #quiz-box {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    display: inline-block;
+    width: 90%;
+    max-width: 700px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  .question {
+    margin: 15px 0;
+    font-size: 1.1em;
+  }
+  input[type="text"]{
+    padding: 6px;
+    font-size: 1em;
+    width: 80%;
+    max-width: 400px;
+  }
+  button {
+    padding: 10px 20px;
+    margin: 10px;
+    background: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  button:hover { background: #3367d6; }
+  #result {
+    margin-top: 20px;
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  .correct { color: green; }
+  .wrong { color: red; }
+</style>
+</head>
+<body>
+
+<h1>英単語テスト</h1>
+
+<div id="quiz-box">
+  <p>
+    <b>モード選択：</b>
+    <button onclick="startQuiz('enToJa')">英語 → 日本語</button>
+    <button onclick="startQuiz('jaToEn')">日本語 → 英語</button>
+  </p>
+
+  <div id="quiz"></div>
+  <button id="submitBtn" style="display:none;" onclick="checkAnswers()">採点</button>
+  <button id="resetBtn" style="display:none;" onclick="resetQuiz()">リセット</button>
+  <button id="retryBtn" style="display:none;" onclick="retryQuiz()">やり直し</button>
+  <div id="result"></div>
+</div>
+
+<script>
+const words = [
+  ["babble","バブバブ言う。喃語を言う。"],
+  ["string together","〜を一列につなぎ合わせる。"],
+  ["exhibit","示す"],
+  ["sequencing","シーケンス、順序に並べること"],
+  ["full-blown","完全に成熟した、満開の"],
+  ["zebra finches","キンカチョウ"],
+  ["Bengalese finches","ジュウシマツ"],
+  ["unsuspected","思いも寄らない"],
+  ["vocalization","発声"],
+  ["reversible","逆にできる、裏にできる"],
+  ["acquire","習得"],
+  ["stepwise","ステップ的には"],
+  ["language-acquisition","言語習得"],
+  ["tuneful","音楽的な"],
+  ["generic","総称の"],
+  ["cross-species","異種間"],
+  ["parallel","類似"],
+  ["bar graph / bar chart","棒グラフ"],
+  ["line graph","折れ線グラフ"],
+  ["pie chart / circle chart","円グラフ"],
+  ["bar graph","帯グラフ"],
+  ["distribution","分布図"],
+  ["histogram","柱状グラフ"],
+  ["title","表題"],
+  ["item","項目"],
+  ["row","行"],
+  ["column","列"],
+  ["cell","セル"],
+  ["unit","単位"],
+  ["segment","円グラフの各部分"],
+  ["bar","棒グラフの棒"],
+  ["straight line","直線"],
+  ["curve","曲線"],
+  ["solid line","実線"],
+  ["broken line","破線"],
+  ["dotted line","点線"],
+  ["undulating line","波線"],
+  ["fluctuating line","変動線"],
+  ["origin","原点"],
+  ["x-axis","x軸"],
+  ["y-axis","y軸"],
+  ["The horizontal/first axis","横軸"],
+  ["The vertical/second axis","縦軸"],
+  ["massive","巨大な"],
+  ["subsequent","引き継いでくる"],
+  ["critically","危機的に、深刻に"],
+  ["Nuclear Regulatory Commission","原子力規制委員会"],
+  ["reactor","原子炉"],
+  ["urging~to","〜することを強いる"],
+  ["given","〜を仮定すると、〜があるとすれば"],
+  ["exposed","露出した、野ざらしの"],
+  ["spent","使用済みの"],
+  ["radioactive materials","放射性物質"],
+  ["transcript","記録、調査書"],
+  ["catastrophe","災害"],
+  ["compiled","編集"],
+  ["census","調査"],
+  ["swell","膨らむ"],
+  ["extend outward to","外側に〜まで延長する"],
+  ["to affect","その結果影響を与える"],
+  ["in the wake of","〜を受けて"],
+  ["in time","間に合うように"],
+  ["conducted","実施された"],
+  ["anticipate","見込む、期待する"],
+  ["be exposed to","〜にさらされる"],
+  ["radioactive plume","放射性プリューム、放射性雲"],
+  ["particles","分子、粒子"],
+  ["the absolute boundary","絶対的境界線"],
+  ["expand","広げる"],
+  ["just hours after","まさに〜の何時間後"],
+  ["stricken","打撃を受けた"],
+  ["progressively","刻々と"],
+  ["farther afield","さらに遠くで"],
+  ["prescribed","規定された"],
+  ["radiation doses","放射線量"],
+  ["exceed","越える"],
+  ["exposure","被爆"],
+  ["initiated","開始された"],
+  ["rem","レム"],
+  ["millisieverts","ミリシーベルト"],
+  ["a dosage unit","軽量単位"],
+  ["immediate","瞬間的な"],
+  ["sievert","シーベルト"],
+  ["straightaway","直ちに"],
+  ["close call","危機一髪"],
+  ["confusion","戸惑、困惑"],
+  ["ultimately","最終的に、結局"],
+  ["flaw","欠陥"],
+  ["enlightening","啓発的な"],
+  ["in terms of","〜と言う意味で"],
+  ["foremost","真っ先に"],
+  ["power","〜に動力を与える"],
+  ["toxic gases","有毒ガス"],
+  ["significantly","かなり、大きく"],
+  ["approximately","大方、約"],
+  ["carrying it out","それを執行すること"],
+  ["charged with","〜の任務をもった"],
+  ["call on","訴える、要求する"],
+  ["radioactive iodine","放射性ヨウ素、放射性ヨード"],
+  ["potassium iodide pills","カリウム・ヨウ化物の錠剤"]
+];
+
+let quizData = [];
+let mode = "";
+
+function startQuiz(selectedMode) {
+  mode = selectedMode;
+  quizData = [];
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("quiz").innerHTML = "";
+  document.getElementById("submitBtn").style.display = "inline-block";
+  document.getElementById("resetBtn").style.display = "inline-block";
+  document.getElementById("retryBtn").style.display = "inline-block";
+
+  let shuffled = [...words].sort(() => 0.5 - Math.random()).slice(0,10);
+  
+  shuffled.forEach((pair, i) => {
+    let questionText = mode === 'enToJa' ? pair[0] : pair[1];
+    let answer = mode === 'enToJa' ? pair[1] : pair[0];
+    quizData.push({q: questionText, a: answer});
+    document.getElementById("quiz").innerHTML += `
+      <div class="question" id="q${i}">
+        <b>Q${i+1}.</b> ${questionText}<br>
+        <input type="text" id="ans${i}" placeholder="答えを入力">
+        <div class="correct-answer" id="correct${i}" style="color:green; display:none;">正解: ${answer}</div>
+      </div>
+    `;
+  });
+}
+
+function checkAnswers() {
+  let correct = 0;
+  quizData.forEach((item, i) => {
+    let userAns = document.getElementById(`ans${i}`).value.trim();
+    let correctDiv = document.getElementById(`correct${i}`);
+    if (userAns && item.a.replace(/\s+/g,'').includes(userAns.replace(/\s+/g,''))) {
+      correct++;
+      document.getElementById(`ans${i}`).style.border = "2px solid green";
+      correctDiv.style.display = "none";
+    } else {
+      document.getElementById(`ans${i}`).style.border = "2px solid red";
+      correctDiv.style.display = "block";
+    }
+  });
+  document.getElementById("result").innerHTML =
+    `<span class="${correct === 10 ? 'correct' : 'wrong'}">
+      正解数：${correct}/10 (${Math.round(correct*10)}点)
+     </span>`;
+}
+
+function retryQuiz() {
+  quizData.forEach((item, i) => {
+    document.getElementById(`ans${i}`).value = "";
+    document.getElementById(`ans${i}`).style.border = "1px solid #ccc";
+    document.getElementById(`correct${i}`).style.display = "none";
+  });
+  document.getElementById("result").innerHTML = "";
+}
+
+function resetQuiz() {
+  document.getElementById("quiz").innerHTML = "";
+  document.getElementById("result").innerHTML = "";
+  document.getElementById("submitBtn").style.display = "none";
+  document.getElementById("resetBtn").style.display = "none";
+  document.getElementById("retryBtn").style.display = "none";
+}
+</script>
+
+</body>
+</html>
