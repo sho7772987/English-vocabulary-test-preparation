@@ -233,7 +233,7 @@ function checkAnswers() {
   quizData.forEach((item, i) => {
     let userAns = document.getElementById(`ans${i}`).value.trim();
     let correctDiv = document.getElementById(`correct${i}`);
-    if (userAns && item.a.replace(/\s+/g,'').includes(userAns.replace(/\s+/g,''))) {
+    if (userAns && item.a.replace(/\s+/g,'') === userAns.replace(/\s+/g,'')) {
       correct++;
       document.getElementById(`ans${i}`).style.border = "2px solid green";
       correctDiv.style.display = "none";
